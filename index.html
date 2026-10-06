@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCRM - Gestión Académica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<!--------------------------LOGIN - INGRESO AL SISTEMA ----------------------->
+
+    <div id="login-view" >
+        <div class="card-custom login-card shadow-lg text-center">
+            <div class="login-icon text-white fs-1">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+            <h3 class="fw-bold mb-1">USIP - POSTGRADO</h3>
+            <p class="text-muted mb-4">Bienvenidos jovenes</p>
+            
+            <form id="forms-Autentication">
+                <div class="form-floating mb-3 text-start">
+                    <input type="email" class="form-control focus-ring-success" id="email" placeholder="correo@ejemplo.com" required>
+                    <label for="loginEmail">Correo Electrónico</label>
+                </div>
+                <div class="form-floating mb-4 text-start">
+                    <input type="password" class="form-control focus-ring-success" id="password" placeholder="Contraseña" required >
+                    <label for="loginPassword">Contraseña</label>
+                </div>
+                <button type="submit" class="btn btn-success w-100 py-3 rounded-3 fw-bold fs-6 shadow-sm">Iniciar Sesión</button>
+            </form>
+                <div id="msg"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/sesion.js"></script>
+    <script src="js/crud.js"></script>   <!-- solo en páginas que lo necesiten -->
+    <script src="js/login.js"></script>  <!-- solo en la página de login -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- DATA STATE ---
+        let diplomados = [
+            { id: 'd1', nombre: 'Diplomado en Marketing Digital', desc: 'Aprende estrategias avanzadas para redes sociales y SEO.' },
+            { id: 'd2', nombre: 'Diplomado en Data Science', desc: 'Análisis de datos utilizando Python y Machine Learning.' },
+            { id: 'd3', nombre: 'Diplomado en Gestión de Proyectos', desc: 'Metodologías ágiles y PMI para gerentes.' }
+        ];
+
+        let prospectos = [
+            { id: 'p1', fecha: '2023-10-01', telefono: '59170012345', nombre: 'Ana García', diplomados: ['d1', 'd3'], estado: 'Nuevo' },
+            { id: 'p2', fecha: '2023-10-02', telefono: '59171123456', nombre: 'Carlos López', diplomados: ['d2'], estado: 'En contacto' },
+            { id: 'p3', fecha: '2023-10-05', telefono: '59172234567', nombre: 'María Fernández', diplomados: ['d1'], estado: 'Matriculado' },
+            { id: 'p4', fecha: '2023-10-10', telefono: '59173345678', nombre: 'Juan Pérez', diplomados: ['d2', 'd3'], estado: 'Perdido' },
+        ];
+
+        let deleteTarget = { type: null, id: null };
+
+        // --- BOOTSTRAP MODAL INSTANCES ---
+        const modalDip = new bootstrap.Modal(document.getElementById('modalDiplomado'));
+        const modalPros = new bootstrap.Modal(document.getElementById('modalProspecto'));
+        const modalDel = new bootstrap.Modal(document.getElementById('modalDelete'));
+
+        // --- NAVIGATION LOGIC ---
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('app-view').style.display = 'block';
+            initApp();
+        });
+
+        document.getElementById('btnLogout').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('app-view').style.display = 'none';
+            document.getElementById('login-view').style.display = 'flex';
+        });
+
+        document.querySelectorAll('.sidebar-nav .nav-link-custom').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Update active class
+                document.querySelectorAll('.sidebar-nav .nav-link-custom').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Show view
+                const target = link.getAttribute('data-target');
+                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                document.getElementById(`view-${target}`).classList.add('active');
+            });
+        });
+
+        // --- INITIALIZATION ---
+        function initApp() {
+            renderDiplomados();
+            renderProspectos();
+            updateDashboard();
+        }
+
+        // --- HELPER FUNCTIONS ---
+        const generateId = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+        const getBadgeClass = (estado) => {
+            switch(estado) {
+                case 'Nuevo': return 'text-bg-primary bg-opacity-10 text-primary border border-primary-subtle';
+                case 'En contacto': return 'text-bg-warning bg-opacity-10 text-warning border border-warning-subtle';
+                case 'Matriculado': return 'text-bg-success bg-opacity-10 text-success border border-success-subtle';
+                case 'Perdido': return 'text-bg-danger bg-opacity-10 text-danger border border-danger-subtle';
+                default: return 'text-bg-secondary';
+            }
+        };
+
+        // --- DASHBOARD ---
+        function updateDashboard() {
+            document.getElementById('stat-prospectos').innerText = prospectos.length;
+            document.getElementById('stat-diplomados').innerText = diplomados.length;
+            document.getElementById('stat-contacto').innerText = prospectos.filter(p => p.estado === 'En contacto').length;
+            document.getElementById('stat-matriculados').innerText = prospectos.filter(p => p.estado === 'Matriculado').length;
+        }
+
+        // --- DIPLOMADOS CRUD ---
+        function renderDiplomados() {
+            const tbody = document.getElementById('tableBodyDiplomados');
+            const emptyState = document.getElementById('diplomadosEmptyState');
+            tbody.innerHTML = '';
+            
+            if (diplomados.length === 0) {
+                emptyState.classList.remove('d-none');
+                return;
+            }
+            emptyState.classList.add('d-none');
+
+            diplomados.forEach((dip, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="ps-4 text-muted">${index + 1}</td>
+                    <td class="fw-medium text-dark">${dip.nombre}</td>
+                    <td class="text-muted text-truncate" style="max-width: 250px;" title="${dip.desc}">${dip.desc}</td>
+                    <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-light text-success me-1" onclick="openDiplomadoModal('${dip.id}')" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+                        <button class="btn btn-sm btn-light text-danger" onclick="confirmDelete('diplomado', '${dip.id}')" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateDashboard();
+            updateDiplomadosFilterOptions(); // Update prospectos filter when diplomados change
+        }
+
+        function openDiplomadoModal(id = null) {
+            const isEdit = id !== null;
+            document.getElementById('modalDiplomadoTitle').innerText = isEdit ? 'Editar Diplomado' : 'Añadir Diplomado';
+            document.getElementById('dipId').value = id || '';
+            
+            if (isEdit) {
+                const dip = diplomados.find(d => d.id === id);
+                document.getElementById('dipNombre').value = dip.nombre;
+                document.getElementById('dipDesc').value = dip.desc;
+            } else {
+                document.getElementById('formDiplomado').reset();
+            }
+            modalDip.show();
+        }
+
+        document.getElementById('formDiplomado').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('dipId').value;
+            const nombre = document.getElementById('dipNombre').value;
+            const desc = document.getElementById('dipDesc').value;
+
+            if (id) {
+                // Edit
+                const index = diplomados.findIndex(d => d.id === id);
+                if(index !== -1) diplomados[index] = { id, nombre, desc };
+            } else {
+                // Add
+                diplomados.push({ id: generateId(), nombre, desc });
+            }
+            
+            renderDiplomados();
+            renderProspectos(); // Re-render prospectos to update names if changed
+            modalDip.hide();
+        });
+
+
+        // --- PROSPECTOS CRUD & FILTERS ---
+        function updateDiplomadosFilterOptions() {
+            const select = document.getElementById('filterDiplomado');
+            const currentVal = select.value;
+            
+            // Only populate options based on visible filtered prospectos (ignoring diplomado filter itself)
+            const phoneSearch = document.getElementById('filterPhone').value.trim();
+            const estadoSearch = document.getElementById('filterEstado').value;
+            
+            let baseProspectos = prospectos;
+            if (phoneSearch) {
+                baseProspectos = prospectos.filter(p => p.telefono.includes(phoneSearch));
+            } else {
+                baseProspectos = prospectos.filter(p => !estadoSearch || p.estado === estadoSearch);
+            }
+
+            const activeDipIds = new Set();
+            baseProspectos.forEach(p => p.diplomados.forEach(d => activeDipIds.add(d)));
+
+            select.innerHTML = '<option value="">Todos los Diplomados</option>';
+            diplomados.forEach(dip => {
+                if(activeDipIds.has(dip.id)) {
+                    select.innerHTML += `<option value="${dip.id}">${dip.nombre}</option>`;
+                }
+            });
+
+            // Restore selection if it still exists
+            if (activeDipIds.has(currentVal)) {
+                select.value = currentVal;
+            }
+        }
+
+        function getFilteredProspectos() {
+            const phoneSearch = document.getElementById('filterPhone').value.trim();
+            const dipFilter = document.getElementById('filterDiplomado').value;
+            const estFilter = document.getElementById('filterEstado').value;
+
+            const filterDipSelect = document.getElementById('filterDiplomado');
+            const filterEstSelect = document.getElementById('filterEstado');
+
+            if (phoneSearch) {
+                // Disable other filters if phone search is active
+                filterDipSelect.disabled = true;
+                filterEstSelect.disabled = true;
+                return prospectos.filter(p => p.telefono.includes(phoneSearch));
+            } else {
+                filterDipSelect.disabled = false;
+                filterEstSelect.disabled = false;
+                return prospectos.filter(p => {
+                    const matchDip = !dipFilter || p.diplomados.includes(dipFilter);
+                    const matchEst = !estFilter || p.estado === estFilter;
+                    return matchDip && matchEst;
+                });
+            }
+        }
+
+        function renderProspectos() {
+            const tbody = document.getElementById('tableBodyProspectos');
+            const emptyState = document.getElementById('prospectosEmptyState');
+            
+            updateDiplomadosFilterOptions();
+            const filteredData = getFilteredProspectos();
+            
+            tbody.innerHTML = '';
+            
+            if (filteredData.length === 0) {
+                emptyState.classList.remove('d-none');
+                return;
+            }
+            emptyState.classList.add('d-none');
+
+            filteredData.forEach((p, index) => {
+                // Map diplomado IDs to names
+                const dipsHtml = p.diplomados.map(dId => {
+                    const dip = diplomados.find(d => d.id === dId);
+                    return dip ? `<span class="badge bg-light text-dark border me-1 mb-1 fw-normal">${dip.nombre}</span>` : '';
+                }).join('') || '<span class="text-muted small">Ninguno</span>';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="ps-4 text-muted">${index + 1}</td>
+                    <td class="text-muted">${p.fecha}</td>
+                    <td>
+                        <a href="https://wa.me/${p.telefono}" target="_blank" class="text-success text-decoration-none fw-medium d-inline-flex align-items-center gap-1 bg-success bg-opacity-10 px-2 py-1 rounded-pill">
+                            <i class="bi bi-whatsapp"></i> ${p.telefono}
+                        </a>
+                    </td>
+                    <td class="fw-medium text-dark">${p.nombre}</td>
+                    <td style="max-width: 200px;">${dipsHtml}</td>
+                    <td><span class="badge badge-custom ${getBadgeClass(p.estado)}">${p.estado}</span></td>
+                    <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-light text-success me-1" onclick="openProspectoModal('${p.id}')" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+                        <button class="btn btn-sm btn-light text-danger" onclick="confirmDelete('prospecto', '${p.id}')" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateDashboard();
+        }
+
+        // Setup filter listeners
+        document.getElementById('filterPhone').addEventListener('input', renderProspectos);
+        document.getElementById('filterDiplomado').addEventListener('change', renderProspectos);
+        document.getElementById('filterEstado').addEventListener('change', renderProspectos);
+
+        function openProspectoModal(id = null) {
+            const isEdit = id !== null;
+            document.getElementById('modalProspectoTitle').innerText = isEdit ? 'Editar Prospecto' : 'Añadir Prospecto';
+            document.getElementById('prosId').value = id || '';
+            
+            // Build diplomados checkboxes dynamically
+            const container = document.getElementById('prosDiplomadosContainer');
+            container.innerHTML = diplomados.length === 0 ? '<p class="text-muted small mb-0">No hay diplomados creados.</p>' : '';
+            
+            diplomados.forEach(dip => {
+                const div = document.createElement('div');
+                div.className = 'form-check mb-2';
+                div.innerHTML = `
+                    <input class="form-check-input check-dip focus-ring-success" type="checkbox" value="${dip.id}" id="chk_${dip.id}">
+                    <label class="form-check-label" for="chk_${dip.id}">${dip.nombre}</label>
+                `;
+                container.appendChild(div);
+            });
+
+            if (isEdit) {
+                const pros = prospectos.find(p => p.id === id);
+                document.getElementById('prosNombre').value = pros.nombre;
+                document.getElementById('prosTelefono').value = pros.telefono;
+                document.getElementById('prosEstado').value = pros.estado;
+                document.getElementById('prosFecha').value = pros.fecha;
+                
+                pros.diplomados.forEach(dId => {
+                    const chk = document.getElementById(`chk_${dId}`);
+                    if(chk) chk.checked = true;
+                });
+            } else {
+                document.getElementById('formProspecto').reset();
+                document.getElementById('prosFecha').value = new Date().toISOString().split('T')[0];
+            }
+            modalPros.show();
+        }
+
+        document.getElementById('formProspecto').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('prosId').value;
+            const nombre = document.getElementById('prosNombre').value;
+            const telefono = document.getElementById('prosTelefono').value;
+            const estado = document.getElementById('prosEstado').value;
+            const fecha = document.getElementById('prosFecha').value;
+            
+            // Gather selected diplomados
+            const selectedDips = [];
+            document.querySelectorAll('.check-dip:checked').forEach(chk => {
+                selectedDips.push(chk.value);
+            });
+
+            if (id) {
+                // Edit
+                const index = prospectos.findIndex(p => p.id === id);
+                if(index !== -1) prospectos[index] = { id, nombre, telefono, estado, fecha, diplomados: selectedDips };
+            } else {
+                // Add
+                prospectos.push({ id: generateId(), nombre, telefono, estado, fecha, diplomados: selectedDips });
+            }
+            
+            renderProspectos();
+            modalPros.hide();
+        });
+
+
+        // --- GENERIC DELETE CONFIRMATION ---
+        function confirmDelete(type, id) {
+            deleteTarget = { type, id };
+            modalDel.show();
+        }
+
+        document.getElementById('btnConfirmDelete').addEventListener('click', () => {
+            if (deleteTarget.type === 'diplomado') {
+                diplomados = diplomados.filter(d => d.id !== deleteTarget.id);
+                // Also clean up prospectos that had this diplomado
+                prospectos.forEach(p => {
+                    p.diplomados = p.diplomados.filter(dId => dId !== deleteTarget.id);
+                });
+                renderDiplomados();
+                renderProspectos();
+            } else if (deleteTarget.type === 'prospecto') {
+                prospectos = prospectos.filter(p => p.id !== deleteTarget.id);
+                renderProspectos();
+            }
+            modalDel.hide();
+        });
+
+
+    </script>
+
+</body>
+</html>

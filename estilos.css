@@ -1,0 +1,164 @@
+
+        :root {
+            --brand-green: #023020;
+            --brand-green-dark: #0e5c43;
+            --brand-green-light: #d1fae5;
+            --bg-body: #f3f4f6;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: #374151;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Theming Bootstrap */
+        .btn-success, .btn-primary {
+            background-color: var(--brand-green);
+            border-color: var(--brand-green);
+            color: white;
+        }
+        .btn-success:hover, .btn-primary:hover {
+            background-color: var(--brand-green-dark);
+            border-color: var(--brand-green-dark);
+        }
+        .text-success { color: var(--brand-green) !important; }
+        .bg-success { background-color: var(--brand-green) !important; }
+        .focus-ring-success:focus {
+            border-color: var(--brand-green-light);
+            box-shadow: 0 0 0 .25rem rgba(16, 185, 129, 0.25);
+        }
+
+        /* Utility Classes */
+        .card-custom {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background: #ffffff;
+        }
+        .table-custom th {
+            background-color: #f9fafb;
+            color: #6b7280;
+            font-weight: 600;
+            border-bottom-width: 2px;
+        }
+        .table-custom td {
+            vertical-align: middle;
+        }
+        .badge-custom {
+            padding: 0.5em 0.75em;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+
+        /* Login Screen */
+        #login-view {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--brand-green-light) 0%, #ecfdf5 100%);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+        }
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--brand-green);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem auto;
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+
+        /* PARA QUE SE MUESTRE */
+        #app-view { display: none; }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-brand {
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .sidebar-nav {
+            padding: 1.5rem 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .nav-link-custom {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            border-radius: 0.75rem;
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .nav-link-custom:hover {
+            background-color: #f9fafb;
+            color: #111827;
+        }
+        .nav-link-custom.active {
+            background-color: var(--brand-green-light);
+            color: var(--brand-green-dark);
+            font-weight: 600;
+        }
+        .sidebar-footer {
+            padding: 1.5rem 1rem;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Utility specific views */
+        .view-section { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Checkbox list styling for Modals */
+        .diplomados-checkbox-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+        }

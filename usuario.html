@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM - Gestión Académica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos.css">
+
+</head>
+<body>
+
+<!--------------------------VISTA VENDEDOR----------------------->
+
+    <div ><!---id="app-view"---->
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand text-success">
+                <i class="bi bi-mortarboard-fill"></i> EduCRM
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-link-custom active" data-target="dashboard">
+                    <i class="bi bi-grid-1x2"></i> Dashboard
+                </a>
+                <a href="#" class="nav-link-custom" data-target="prospectos">
+                    <i class="bi bi-people"></i> Prospectos
+                </a>
+                <a href="#" class="nav-link-custom" data-target="diplomados">
+                    <i class="bi bi-journal-bookmark"></i> Diplomados
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" onclick="event.preventDefault(); cerrarSesion();" id="btnLogout" class="nav-link-custom text-danger hover-bg-danger-light">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <section id="view-dashboard" class="view-section active">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-0">Dashboard</h2>
+                        <p class="text-muted">Resumen general de tu CRM académico</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-custom p-4 border-0 d-flex align-items-center gap-3">
+                            <div class="bg-success bg-opacity-10 text-success p-3 rounded-4 fs-3">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-0 fs-6">Total Prospectos</p>
+                                <h3 class="fw-bold mb-0" id="stat-prospectos">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-custom p-4 border-0 d-flex align-items-center gap-3">
+                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-4 fs-3">
+                                <i class="bi bi-journal-bookmark-fill"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-0 fs-6">Diplomados</p>
+                                <h3 class="fw-bold mb-0" id="stat-diplomados">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-custom p-4 border-0 d-flex align-items-center gap-3">
+                            <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-4 fs-3">
+                                <i class="bi bi-telephone-fill"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-0 fs-6">En Contacto</p>
+                                <h3 class="fw-bold mb-0" id="stat-contacto">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-custom p-4 border-0 d-flex align-items-center gap-3">
+                            <div class="bg-info bg-opacity-10 text-info p-3 rounded-4 fs-3">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-0 fs-6">Matriculados</p>
+                                <h3 class="fw-bold mb-0" id="stat-matriculados">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-custom p-5 text-center text-muted d-flex flex-column align-items-center justify-content-center" style="min-height: 300px;">
+                    <i class="bi bi-bar-chart fs-1 mb-3 opacity-25"></i>
+                    <p>Más estadísticas y gráficos se mostrarán aquí pronto.</p>
+                </div>
+            </section>
+
+            <section id="view-prospectos" class="view-section">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <div>
+                        <h2 class="fw-bold mb-0">Prospectos</h2>
+                        <p class="text-muted">Gestión de potenciales clientes</p>
+                    </div>
+                    <button class="btn btn-success shadow-sm" onclick="openProspectoModal()">
+                        <i class="bi bi-plus-lg"></i> Añadir Prospecto
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="card-custom p-3 mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                                <input type="text" id="filterPhone" class="form-control border-start-0 focus-ring-success pl-0" placeholder="Buscar por teléfono (Prioridad)">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="filterDiplomado" class="form-select focus-ring-success">
+                                <option value="">Todos los Diplomados</option>
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="filterEstado" class="form-select focus-ring-success">
+                                <option value="">Todos los Estados</option>
+                                <option value="Nuevo">Nuevo</option>
+                                <option value="En contacto">En contacto</option>
+                                <option value="Matriculado">Matriculado</option>
+                                <option value="Perdido">Perdido</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="card-custom overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4 py-3">Nº</th>
+                                    <th class="py-3">Fecha de Registro</th>
+                                    <th class="py-3">Teléfono</th>
+                                    <th class="py-3">Nombre y Apellido</th>
+                                    <th class="py-3">Diplomado</th>
+                                    <th class="py-3">Estado</th>
+                                    <th class="py-3 text-end pe-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-prospectos"> <!---------tableBodyProspectos-->
+                                <!-- Data rendered via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="prospectosEmptyState" class="text-center p-5 text-muted d-none">
+                        <i class="bi bi-inbox fs-1 opacity-25"></i>
+                        <p class="mt-2">No se encontraron prospectos.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-diplomados" class="view-section">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <div>
+                        <h2 class="fw-bold mb-0">Diplomados</h2>
+                        <p class="text-muted">Administración de programas académicos</p>
+                    </div>
+                    <button class="btn btn-success shadow-sm" onclick="openDiplomadoModal()">
+                        <i class="bi bi-plus-lg"></i> Añadir Diplomado
+                    </button>
+                </div>
+
+                <div class="card-custom overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4 py-3" width="5%">Nº</th>
+                                    <th class="py-3" width="30%">Nombre del Diplomado</th>
+                                    <th class="py-3" width="50%">Descripción</th>
+                                    <th class="py-3 text-end pe-4" width="15%">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBodyDiplomados">
+                                <!-- Data rendered via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="diplomadosEmptyState" class="text-center p-5 text-muted d-none">
+                        <i class="bi bi-inbox fs-1 opacity-25"></i>
+                        <p class="mt-2">No hay diplomados registrados.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal Diplomado -->
+    <div class="modal fade" id="modalDiplomado" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="modalDiplomadoTitle">Añadir Diplomado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formDiplomado">
+                        <input type="hidden" id="dipId">
+                        <div class="mb-3">
+                            <label class="form-label fw-medium text-secondary">Nombre del Diplomado</label>
+                            <input type="text" class="form-control focus-ring-success" id="dipNombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-medium text-secondary">Descripción</label>
+                            <textarea class="form-control focus-ring-success" id="dipDesc" rows="3" required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Prospecto -->
+    <div class="modal fade" id="modalProspecto" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="modalProspectoTitle">Añadir Prospecto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formProspecto">
+                        <input type="hidden" id="prosId">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-secondary">Nombre y Apellido</label>
+                                <input type="text" class="form-control focus-ring-success" id="prosNombre" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-secondary">Teléfono</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-telephone"></i></span>
+                                    <input type="tel" class="form-control focus-ring-success" id="prosTelefono" required placeholder="Ej: 59170012345" pattern="[0-9]+">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-secondary">Estado</label>
+                                <select class="form-select focus-ring-success" id="prosEstado" required>
+                                    <option value="Nuevo">Nuevo</option>
+                                    <option value="En contacto">En contacto</option>
+                                    <option value="Matriculado">Matriculado</option>
+                                    <option value="Perdido">Perdido</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-secondary">Fecha de Registro</label>
+                                <input type="date" class="form-control focus-ring-success" id="prosFecha" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium text-secondary">Diplomados de Interés</label>
+                                <div class="diplomados-checkbox-list" id="prosDiplomadosContainer">
+                                    <!-- Checkboxes dynamically generated -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirm Delete -->
+    <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 rounded-4 shadow text-center p-3">
+                <div class="modal-body">
+                    <div class="text-danger mb-3">
+                        <i class="bi bi-exclamation-circle" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">¿Estás seguro?</h5>
+                    <p class="text-muted text-sm mb-4">Esta acción no se puede deshacer.</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger px-4" id="btnConfirmDelete">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/sesion.js"></script>
+    <script src="js/crud.js"></script>   <!-- solo en páginas que lo necesiten -->
+    <script src="js/prospectos.js"></script>   <!-- solo en páginas que lo necesiten -->
+
+
+    <script>
+            async function configurarVista() {
+
+            const usuario = await getUsuario();
+
+            // Si no hay usuario válido, volver al login
+            if (!usuario) {
+                location.href = 'index.html';
+                return;
+            }
+
+            const appView = $('app-view');
+
+            if (!appView) {
+                return;
+            }
+
+            // ADMIN → mostrar
+            if (usuario.tipo === 'admin') {
+                appView.style.display = 'block';
+            }
+
+            // VENDEDOR → mantener oculto
+            else if (usuario.tipo === 'vendedor') {
+                appView.style.display = 'none';
+            }
+
+            }
+
+            configurarVista();
+
+    </script>
+
+
+    <script>
+        // --- DATA STATE ---
+        let diplomados = [
+            { id: 'd1', nombre: 'Diplomado en Marketing Digital', desc: 'Aprende estrategias avanzadas para redes sociales y SEO.' },
+            { id: 'd2', nombre: 'Diplomado en Data Science', desc: 'Análisis de datos utilizando Python y Machine Learning.' },
+            { id: 'd3', nombre: 'Diplomado en Gestión de Proyectos', desc: 'Metodologías ágiles y PMI para gerentes.' }
+        ];
+
+        let prospectos = [
+            { id: 'p1', fecha: '2023-10-01', telefono: '59170012345', nombre: 'Ana García', diplomados: ['d1', 'd3'], estado: 'Nuevo' },
+            { id: 'p2', fecha: '2023-10-02', telefono: '59171123456', nombre: 'Carlos López', diplomados: ['d2'], estado: 'En contacto' },
+            { id: 'p3', fecha: '2023-10-05', telefono: '59172234567', nombre: 'María Fernández', diplomados: ['d1'], estado: 'Matriculado' },
+            { id: 'p4', fecha: '2023-10-10', telefono: '59173345678', nombre: 'Juan Pérez', diplomados: ['d2', 'd3'], estado: 'Perdido' },
+        ];
+
+        let deleteTarget = { type: null, id: null };
+
+        // --- BOOTSTRAP MODAL INSTANCES ---
+        const modalDip = new bootstrap.Modal(document.getElementById('modalDiplomado'));
+        const modalPros = new bootstrap.Modal(document.getElementById('modalProspecto'));
+        const modalDel = new bootstrap.Modal(document.getElementById('modalDelete'));
+
+  
+
+        document.getElementById('btnLogout').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('app-view').style.display = 'none';
+            document.getElementById('login-view').style.display = 'flex';
+        });
+
+        document.querySelectorAll('.sidebar-nav .nav-link-custom').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Update active class
+                document.querySelectorAll('.sidebar-nav .nav-link-custom').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Show view
+                const target = link.getAttribute('data-target');
+                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                document.getElementById(`view-${target}`).classList.add('active');
+            });
+        });
+
+        // --- INITIALIZATION ---
+        function initApp() {
+            renderDiplomados();
+            renderProspectos();
+            updateDashboard();
+        }
+
+        // --- HELPER FUNCTIONS ---
+        const generateId = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+        const getBadgeClass = (estado) => {
+            switch(estado) {
+                case 'Nuevo': return 'text-bg-primary bg-opacity-10 text-primary border border-primary-subtle';
+                case 'En contacto': return 'text-bg-warning bg-opacity-10 text-warning border border-warning-subtle';
+                case 'Matriculado': return 'text-bg-success bg-opacity-10 text-success border border-success-subtle';
+                case 'Perdido': return 'text-bg-danger bg-opacity-10 text-danger border border-danger-subtle';
+                default: return 'text-bg-secondary';
+            }
+        };
+
+        // --- DASHBOARD ---
+        function updateDashboard() {
+            document.getElementById('stat-prospectos').innerText = prospectos.length;
+            document.getElementById('stat-diplomados').innerText = diplomados.length;
+            document.getElementById('stat-contacto').innerText = prospectos.filter(p => p.estado === 'En contacto').length;
+            document.getElementById('stat-matriculados').innerText = prospectos.filter(p => p.estado === 'Matriculado').length;
+        }
+
+        // --- DIPLOMADOS CRUD ---
+        function renderDiplomados() {
+            const tbody = document.getElementById('tableBodyDiplomados');
+            const emptyState = document.getElementById('diplomadosEmptyState');
+            tbody.innerHTML = '';
+            
+            if (diplomados.length === 0) {
+                emptyState.classList.remove('d-none');
+                return;
+            }
+            emptyState.classList.add('d-none');
+
+            diplomados.forEach((dip, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="ps-4 text-muted">${index + 1}</td>
+                    <td class="fw-medium text-dark">${dip.nombre}</td>
+                    <td class="text-muted text-truncate" style="max-width: 250px;" title="${dip.desc}">${dip.desc}</td>
+                    <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-light text-success me-1" onclick="openDiplomadoModal('${dip.id}')" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+                        <button class="btn btn-sm btn-light text-danger" onclick="confirmDelete('diplomado', '${dip.id}')" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateDashboard();
+            updateDiplomadosFilterOptions(); // Update prospectos filter when diplomados change
+        }
+
+        function openDiplomadoModal(id = null) {
+            const isEdit = id !== null;
+            document.getElementById('modalDiplomadoTitle').innerText = isEdit ? 'Editar Diplomado' : 'Añadir Diplomado';
+            document.getElementById('dipId').value = id || '';
+            
+            if (isEdit) {
+                const dip = diplomados.find(d => d.id === id);
+                document.getElementById('dipNombre').value = dip.nombre;
+                document.getElementById('dipDesc').value = dip.desc;
+            } else {
+                document.getElementById('formDiplomado').reset();
+            }
+            modalDip.show();
+        }
+
+        document.getElementById('formDiplomado').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('dipId').value;
+            const nombre = document.getElementById('dipNombre').value;
+            const desc = document.getElementById('dipDesc').value;
+
+            if (id) {
+                // Edit
+                const index = diplomados.findIndex(d => d.id === id);
+                if(index !== -1) diplomados[index] = { id, nombre, desc };
+            } else {
+                // Add
+                diplomados.push({ id: generateId(), nombre, desc });
+            }
+            
+            renderDiplomados();
+            renderProspectos(); // Re-render prospectos to update names if changed
+            modalDip.hide();
+        });
+
+
+        // --- PROSPECTOS CRUD & FILTERS ---
+        function updateDiplomadosFilterOptions() {
+            const select = document.getElementById('filterDiplomado');
+            const currentVal = select.value;
+            
+            // Only populate options based on visible filtered prospectos (ignoring diplomado filter itself)
+            const phoneSearch = document.getElementById('filterPhone').value.trim();
+            const estadoSearch = document.getElementById('filterEstado').value;
+            
+            let baseProspectos = prospectos;
+            if (phoneSearch) {
+                baseProspectos = prospectos.filter(p => p.telefono.includes(phoneSearch));
+            } else {
+                baseProspectos = prospectos.filter(p => !estadoSearch || p.estado === estadoSearch);
+            }
+
+            const activeDipIds = new Set();
+            baseProspectos.forEach(p => p.diplomados.forEach(d => activeDipIds.add(d)));
+
+            select.innerHTML = '<option value="">Todos los Diplomados</option>';
+            diplomados.forEach(dip => {
+                if(activeDipIds.has(dip.id)) {
+                    select.innerHTML += `<option value="${dip.id}">${dip.nombre}</option>`;
+                }
+            });
+
+            // Restore selection if it still exists
+            if (activeDipIds.has(currentVal)) {
+                select.value = currentVal;
+            }
+        }
+
+        function getFilteredProspectos() {
+            const phoneSearch = document.getElementById('filterPhone').value.trim();
+            const dipFilter = document.getElementById('filterDiplomado').value;
+            const estFilter = document.getElementById('filterEstado').value;
+
+            const filterDipSelect = document.getElementById('filterDiplomado');
+            const filterEstSelect = document.getElementById('filterEstado');
+
+            if (phoneSearch) {
+                // Disable other filters if phone search is active
+                filterDipSelect.disabled = true;
+                filterEstSelect.disabled = true;
+                return prospectos.filter(p => p.telefono.includes(phoneSearch));
+            } else {
+                filterDipSelect.disabled = false;
+                filterEstSelect.disabled = false;
+                return prospectos.filter(p => {
+                    const matchDip = !dipFilter || p.diplomados.includes(dipFilter);
+                    const matchEst = !estFilter || p.estado === estFilter;
+                    return matchDip && matchEst;
+                });
+            }
+        }
+
+        function renderProspectos() {
+            const tbody = document.getElementById('tableBodyProspectos');
+            const emptyState = document.getElementById('prospectosEmptyState');
+            
+            updateDiplomadosFilterOptions();
+            const filteredData = getFilteredProspectos();
+            
+            tbody.innerHTML = '';
+            
+            if (filteredData.length === 0) {
+                emptyState.classList.remove('d-none');
+                return;
+            }
+            emptyState.classList.add('d-none');
+
+            filteredData.forEach((p, index) => {
+                // Map diplomado IDs to names
+                const dipsHtml = p.diplomados.map(dId => {
+                    const dip = diplomados.find(d => d.id === dId);
+                    return dip ? `<span class="badge bg-light text-dark border me-1 mb-1 fw-normal">${dip.nombre}</span>` : '';
+                }).join('') || '<span class="text-muted small">Ninguno</span>';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="ps-4 text-muted">${index + 1}</td>
+                    <td class="text-muted">${p.fecha}</td>
+                    <td>
+                        <a href="https://wa.me/${p.telefono}" target="_blank" class="text-success text-decoration-none fw-medium d-inline-flex align-items-center gap-1 bg-success bg-opacity-10 px-2 py-1 rounded-pill">
+                            <i class="bi bi-whatsapp"></i> ${p.telefono}
+                        </a>
+                    </td>
+                    <td class="fw-medium text-dark">${p.nombre}</td>
+                    <td style="max-width: 200px;">${dipsHtml}</td>
+                    <td><span class="badge badge-custom ${getBadgeClass(p.estado)}">${p.estado}</span></td>
+                    <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-light text-success me-1" onclick="openProspectoModal('${p.id}')" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+                        <button class="btn btn-sm btn-light text-danger" onclick="confirmDelete('prospecto', '${p.id}')" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateDashboard();
+        }
+
+        // Setup filter listeners
+        document.getElementById('filterPhone').addEventListener('input', renderProspectos);
+        document.getElementById('filterDiplomado').addEventListener('change', renderProspectos);
+        document.getElementById('filterEstado').addEventListener('change', renderProspectos);
+
+        function openProspectoModal(id = null) {
+            const isEdit = id !== null;
+            document.getElementById('modalProspectoTitle').innerText = isEdit ? 'Editar Prospecto' : 'Añadir Prospecto';
+            document.getElementById('prosId').value = id || '';
+            
+            // Build diplomados checkboxes dynamically
+            const container = document.getElementById('prosDiplomadosContainer');
+            container.innerHTML = diplomados.length === 0 ? '<p class="text-muted small mb-0">No hay diplomados creados.</p>' : '';
+            
+            diplomados.forEach(dip => {
+                const div = document.createElement('div');
+                div.className = 'form-check mb-2';
+                div.innerHTML = `
+                    <input class="form-check-input check-dip focus-ring-success" type="checkbox" value="${dip.id}" id="chk_${dip.id}">
+                    <label class="form-check-label" for="chk_${dip.id}">${dip.nombre}</label>
+                `;
+                container.appendChild(div);
+            });
+
+            if (isEdit) {
+                const pros = prospectos.find(p => p.id === id);
+                document.getElementById('prosNombre').value = pros.nombre;
+                document.getElementById('prosTelefono').value = pros.telefono;
+                document.getElementById('prosEstado').value = pros.estado;
+                document.getElementById('prosFecha').value = pros.fecha;
+                
+                pros.diplomados.forEach(dId => {
+                    const chk = document.getElementById(`chk_${dId}`);
+                    if(chk) chk.checked = true;
+                });
+            } else {
+                document.getElementById('formProspecto').reset();
+                document.getElementById('prosFecha').value = new Date().toISOString().split('T')[0];
+            }
+            modalPros.show();
+        }
+
+        document.getElementById('formProspecto').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('prosId').value;
+            const nombre = document.getElementById('prosNombre').value;
+            const telefono = document.getElementById('prosTelefono').value;
+            const estado = document.getElementById('prosEstado').value;
+            const fecha = document.getElementById('prosFecha').value;
+            
+            // Gather selected diplomados
+            const selectedDips = [];
+            document.querySelectorAll('.check-dip:checked').forEach(chk => {
+                selectedDips.push(chk.value);
+            });
+
+            if (id) {
+                // Edit
+                const index = prospectos.findIndex(p => p.id === id);
+                if(index !== -1) prospectos[index] = { id, nombre, telefono, estado, fecha, diplomados: selectedDips };
+            } else {
+                // Add
+                prospectos.push({ id: generateId(), nombre, telefono, estado, fecha, diplomados: selectedDips });
+            }
+            
+            renderProspectos();
+            modalPros.hide();
+        });
+
+
+        // --- GENERIC DELETE CONFIRMATION ---
+        function confirmDelete(type, id) {
+            deleteTarget = { type, id };
+            modalDel.show();
+        }
+
+        document.getElementById('btnConfirmDelete').addEventListener('click', () => {
+            if (deleteTarget.type === 'diplomado') {
+                diplomados = diplomados.filter(d => d.id !== deleteTarget.id);
+                // Also clean up prospectos that had this diplomado
+                prospectos.forEach(p => {
+                    p.diplomados = p.diplomados.filter(dId => dId !== deleteTarget.id);
+                });
+                renderDiplomados();
+                renderProspectos();
+            } else if (deleteTarget.type === 'prospecto') {
+                prospectos = prospectos.filter(p => p.id !== deleteTarget.id);
+                renderProspectos();
+            }
+            modalDel.hide();
+        });
+
+    </script>
+</body>
+</html>
+    
+    
+    
+    
+    
+   
