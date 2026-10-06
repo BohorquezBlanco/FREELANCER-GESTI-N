@@ -113,31 +113,39 @@
                     </button>
                 </div>
 
-                <!-- Filters -->
+
+                <!------filter----->
+
                 <div class="card-custom p-3 mb-4">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                                <input type="text" id="filterPhone" class="form-control border-start-0 focus-ring-success pl-0" placeholder="Buscar por teléfono (Prioridad)">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <select id="filterDiplomado" class="form-select focus-ring-success">
-                                <option value="">Todos los Diplomados</option>
-                                <!-- Populated dynamically -->
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <select id="filterEstado" class="form-select focus-ring-success">
-                                <option value="">Todos los Estados</option>
-                                <option value="Nuevo">Nuevo</option>
-                                <option value="En contacto">En contacto</option>
-                                <option value="Matriculado">Matriculado</option>
-                                <option value="Perdido">Perdido</option>
-                            </select>
-                        </div>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" id="filterPhone" class="form-control border-start-0 focus-ring-success pl-0"
+                            placeholder="Prospecto, teléfono o diplomado">
                     </div>
+                    </div>
+                    <div class="col-md-2">
+                    <select id="filterGestión" class="form-select focus-ring-success"></select>
+                    </div>
+                    <div class="col-md-2">
+                    <select id="filterActivo" class="form-select focus-ring-success">
+                        <option value="abierto">Diplomados activos</option>
+                        <option value="cerrado">Diplomados inactivos</option>
+                        <option value="todos">Activos e inactivos</option>
+                    </select>
+                    </div>
+                    <div class="col-md-3">
+                    <select id="filterDiplomado" class="form-select focus-ring-success">
+                        <option value="">Todos los Diplomados</option>
+                    </select>
+                    </div>
+                    <div class="col-md-2">
+                    <select id="filterEstado" class="form-select focus-ring-success">
+                        <option value="">Todos los Estados</option>
+                    </select>
+                    </div>
+                </div>
                 </div>
 
                 <!-- Table -->
@@ -306,7 +314,7 @@
     </div>
 
 
-
+    <script src="estilos.css"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
@@ -350,19 +358,7 @@
 
 
     <script>
-        // --- DATA STATE ---
-        let diplomados = [
-            { id: 'd1', nombre: 'Diplomado en Marketing Digital', desc: 'Aprende estrategias avanzadas para redes sociales y SEO.' },
-            { id: 'd2', nombre: 'Diplomado en Data Science', desc: 'Análisis de datos utilizando Python y Machine Learning.' },
-            { id: 'd3', nombre: 'Diplomado en Gestión de Proyectos', desc: 'Metodologías ágiles y PMI para gerentes.' }
-        ];
-
-        let prospectos = [
-            { id: 'p1', fecha: '2023-10-01', telefono: '59170012345', nombre: 'Ana García', diplomados: ['d1', 'd3'], estado: 'Nuevo' },
-            { id: 'p2', fecha: '2023-10-02', telefono: '59171123456', nombre: 'Carlos López', diplomados: ['d2'], estado: 'En contacto' },
-            { id: 'p3', fecha: '2023-10-05', telefono: '59172234567', nombre: 'María Fernández', diplomados: ['d1'], estado: 'Matriculado' },
-            { id: 'p4', fecha: '2023-10-10', telefono: '59173345678', nombre: 'Juan Pérez', diplomados: ['d2', 'd3'], estado: 'Perdido' },
-        ];
+  
 
         let deleteTarget = { type: null, id: null };
 
