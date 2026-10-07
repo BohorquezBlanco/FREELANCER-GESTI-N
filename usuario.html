@@ -108,44 +108,59 @@
                         <h2 class="fw-bold mb-0">Prospectos</h2>
                         <p class="text-muted">Gestión de potenciales clientes</p>
                     </div>
-                    <button class="btn btn-success shadow-sm" onclick="openProspectoModal()">
+                    <button class="btn btn-success shadow-sm" onclick="abrirNuevoProspecto()">
                         <i class="bi bi-plus-lg"></i> Añadir Prospecto
                     </button>
                 </div>
 
 
                 <!------filter----->
+                    <div class="d-flex gap-2 mb-2">
+                    <button type="button" id="btnCopiarTelefonos" class="btn btn-sm btn-success">
+                        <i class="bi bi-whatsapp"></i> Copiar teléfonos
+                    </button>
+                    <button type="button" id="btnCopiarTabla" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-clipboard"></i> Copiar tabla (Excel)
+                    </button>
+                    </div>
 
                 <div class="card-custom p-3 mb-4">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                        <input type="text" id="filterPhone" class="form-control border-start-0 focus-ring-success pl-0"
-                            placeholder="Prospecto, teléfono o diplomado">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                            <input type="text" id="filterPhone" class="form-control border-start-0 focus-ring-success pl-0"
+                                placeholder="Prospecto, teléfono o diplomado">
+                        </div>
+                        </div>
+                        <div class="col-md-2">
+                        <select id="filterGestión" class="form-select focus-ring-success"></select>
+                        </div>
+                        <div class="col-md-2">
+                        <select id="filterActivo" class="form-select focus-ring-success">
+                            <option value="abierto">Diplomados activos</option>
+                            <option value="cerrado">Diplomados inactivos</option>
+                            <option value="todos">Activos e inactivos</option>
+                        </select>
+                        </div>
+                        <div class="col-md-3">
+                        <select id="filterDiplomado" class="form-select focus-ring-success">
+                            <option value="">Todos los Diplomados</option>
+                        </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select id="filterMatricula" class="form-select focus-ring-success">
+                                <option value="">Matriculados y no</option>
+                                <option value="si">Matriculados</option>
+                                <option value="no">No matriculados</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                        <select id="filterEstado" class="form-select focus-ring-success">
+                            <option value="">Todos los Estados</option>
+                        </select>
+                        </div>
                     </div>
-                    </div>
-                    <div class="col-md-2">
-                    <select id="filterGestión" class="form-select focus-ring-success"></select>
-                    </div>
-                    <div class="col-md-2">
-                    <select id="filterActivo" class="form-select focus-ring-success">
-                        <option value="abierto">Diplomados activos</option>
-                        <option value="cerrado">Diplomados inactivos</option>
-                        <option value="todos">Activos e inactivos</option>
-                    </select>
-                    </div>
-                    <div class="col-md-3">
-                    <select id="filterDiplomado" class="form-select focus-ring-success">
-                        <option value="">Todos los Diplomados</option>
-                    </select>
-                    </div>
-                    <div class="col-md-2">
-                    <select id="filterEstado" class="form-select focus-ring-success">
-                        <option value="">Todos los Estados</option>
-                    </select>
-                    </div>
-                </div>
                 </div>
 
                 <!-- Table -->
@@ -190,12 +205,13 @@
                     <div class="table-responsive">
                         <table class="table table-hover table-custom mb-0">
                             <thead>
-                                <tr>
-                                    <th class="ps-4 py-3" width="5%">Nº</th>
-                                    <th class="py-3" width="30%">Nombre del Diplomado</th>
-                                    <th class="py-3" width="50%">Descripción</th>
-                                    <th class="py-3 text-end pe-4" width="15%">Acciones</th>
-                                </tr>
+                            <tr>
+                                <th class="ps-4 py-3" width="5%">Nº</th>
+                                <th class="py-3" width="45%">Nombre del Diplomado</th>
+                                <th class="py-3" width="15%">Gestión</th>
+                                <th class="py-3" width="20%">Estado</th>
+                                <th class="py-3 text-end pe-4" width="15%">Acciones</th>
+                            </tr>
                             </thead>
                             <tbody id="tableBodyDiplomados">
                                 <!-- Data rendered via JS -->
@@ -216,32 +232,44 @@
     <div class="modal fade" id="modalDiplomado" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
-                <div class="modal-header border-bottom-0 pb-0">
-                    <h5 class="modal-title fw-bold" id="modalDiplomadoTitle">Añadir Diplomado</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold" id="modalDiplomadoTitle">Añadir Diplomado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formDiplomado">
+                <input type="hidden" id="dipId">
+                <div class="mb-3">
+                    <label class="form-label fw-medium text-secondary">Nombre del Diplomado</label>
+                    <input type="text" class="form-control focus-ring-success" id="dipNombre" required>
                 </div>
-                <div class="modal-body">
-                    <form id="formDiplomado">
-                        <input type="hidden" id="dipId">
-                        <div class="mb-3">
-                            <label class="form-label fw-medium text-secondary">Nombre del Diplomado</label>
-                            <input type="text" class="form-control focus-ring-success" id="dipNombre" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-medium text-secondary">Descripción</label>
-                            <textarea class="form-control focus-ring-success" id="dipDesc" rows="3" required></textarea>
-                        </div>
-                        <div class="d-flex justify-content-end gap-2 mt-4">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success">Guardar</button>
-                        </div>
-                    </form>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                    <label class="form-label fw-medium text-secondary">Gestión</label>
+                    <input type="text" class="form-control focus-ring-success" id="dipGestion"
+                            required list="dipGestionesList" placeholder="Ej: 1/2026"
+                            pattern="[12]/[0-9]{4}" title="Formato: semestre/año, por ejemplo 1/2026">
+                    <datalist id="dipGestionesList"></datalist>
+                    </div>
+                    <div class="col-md-6">
+                    <label class="form-label fw-medium text-secondary">Estado</label>
+                    <select class="form-select focus-ring-success" id="dipEstado">
+                        <option value="abierto">Abierto</option>
+                        <option value="cerrado">Cerrado</option>
+                    </select>
+                    </div>
                 </div>
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success" id="btnGuardarDiplomado">Guardar</button>
+                </div>
+                </form>
+            </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Prospecto -->
+    <!-- Modal Prospecto añadir-->
     <div class="modal fade" id="modalProspecto" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 rounded-4 shadow">
@@ -253,8 +281,8 @@
                     <form id="formProspecto">
                         <input type="hidden" id="prosId">
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium text-secondary">Nombre y Apellido</label>
+                            <div class="col-md-12">
+                                <label class="form-label fw-medium text-secondary">Nombres</label>
                                 <input type="text" class="form-control focus-ring-success" id="prosNombre" required>
                             </div>
                             <div class="col-md-6">
@@ -264,35 +292,79 @@
                                     <input type="tel" class="form-control focus-ring-success" id="prosTelefono" required placeholder="Ej: 59170012345" pattern="[0-9]+">
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <label class="form-label fw-medium text-secondary">Estado</label>
-                                <select class="form-select focus-ring-success" id="prosEstado" required>
-                                    <option value="Nuevo">Nuevo</option>
-                                    <option value="En contacto">En contacto</option>
-                                    <option value="Matriculado">Matriculado</option>
-                                    <option value="Perdido">Perdido</option>
-                                </select>
+                                <select class="form-select focus-ring-success" id="prosEstado"></select>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <label class="form-label fw-medium text-secondary">Fecha de Registro</label>
                                 <input type="date" class="form-control focus-ring-success" id="prosFecha" required>
                             </div>
                             <div class="col-12">
                                 <label class="form-label fw-medium text-secondary">Diplomados de Interés</label>
                                 <div class="diplomados-checkbox-list" id="prosDiplomadosContainer">
-                                    <!-- Checkboxes dynamically generated -->
+                                    <!-- Checkboxes generados por JS -->
                                 </div>
                             </div>
                         </div>
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success">Guardar</button>
+                            <button type="submit" class="btn btn-success" id="btnGuardarProspecto">Guardar</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+    </div>  
+
+    <!-- Modal Prospecto EDITAR -->
+    <div class="modal fade" id="modalEditarProspecto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 shadow">
+        <div class="modal-header border-bottom-0 pb-0">
+            <h5 class="modal-title fw-bold">Editar Prospecto</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="formEditarProspecto">
+            <input type="hidden" id="editId">
+            <div class="row g-3">
+                <div class="col-md-12">
+                <label class="form-label fw-medium text-secondary">Nombres</label>
+                <input type="text" class="form-control focus-ring-success" id="editNombre" required>
+                </div>
+                <div class="col-md-6">
+                <label class="form-label fw-medium text-secondary">Teléfono</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-telephone"></i></span>
+                    <input type="tel" class="form-control focus-ring-success" id="editTelefono"
+                        required placeholder="Ej: 59170012345" pattern="[0-9]+">
+                </div>
+                </div>
+                <div class="col-md-6">
+                <label class="form-label fw-medium text-secondary">Fecha de Registro</label>
+                <input type="date" class="form-control focus-ring-success" id="editFecha" required>
+                </div>
+                <div class="col-12">
+                <label class="form-label fw-medium text-secondary">Estados</label>
+                <div class="d-flex flex-wrap gap-3" id="editEstadosContainer"></div>
+                </div>
+                <div class="col-12">
+                <label class="form-label fw-medium text-secondary">Diplomados de Interés</label>
+                <div class="diplomados-checkbox-list" id="editDiplomadosContainer"></div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success" id="btnGuardarEdicion">Guardar</button>
+            </div>
+            </form>
+        </div>
+        </div>
     </div>
+    </div>
+
+
 
     <!-- Modal Confirm Delete -->
     <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
@@ -314,14 +386,17 @@
     </div>
 
 
-    <script src="estilos.css"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
     <script src="js/sesion.js"></script>
     <script src="js/crud.js"></script>   <!-- solo en páginas que lo necesiten -->
     <script src="js/prospectos.js"></script>   <!-- solo en páginas que lo necesiten -->
-
+    <script src="js/descripcion.js"></script>
+    <script src="js/artilujios.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/diplomado.js"></script>
 
     <script>
             async function configurarVista() {
@@ -409,247 +484,6 @@
             }
         };
 
-        // --- DASHBOARD ---
-        function updateDashboard() {
-            document.getElementById('stat-prospectos').innerText = prospectos.length;
-            document.getElementById('stat-diplomados').innerText = diplomados.length;
-            document.getElementById('stat-contacto').innerText = prospectos.filter(p => p.estado === 'En contacto').length;
-            document.getElementById('stat-matriculados').innerText = prospectos.filter(p => p.estado === 'Matriculado').length;
-        }
-
-        // --- DIPLOMADOS CRUD ---
-        function renderDiplomados() {
-            const tbody = document.getElementById('tableBodyDiplomados');
-            const emptyState = document.getElementById('diplomadosEmptyState');
-            tbody.innerHTML = '';
-            
-            if (diplomados.length === 0) {
-                emptyState.classList.remove('d-none');
-                return;
-            }
-            emptyState.classList.add('d-none');
-
-            diplomados.forEach((dip, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="ps-4 text-muted">${index + 1}</td>
-                    <td class="fw-medium text-dark">${dip.nombre}</td>
-                    <td class="text-muted text-truncate" style="max-width: 250px;" title="${dip.desc}">${dip.desc}</td>
-                    <td class="text-end pe-4">
-                        <button class="btn btn-sm btn-light text-success me-1" onclick="openDiplomadoModal('${dip.id}')" title="Editar"><i class="bi bi-pencil-fill"></i></button>
-                        <button class="btn btn-sm btn-light text-danger" onclick="confirmDelete('diplomado', '${dip.id}')" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            updateDashboard();
-            updateDiplomadosFilterOptions(); // Update prospectos filter when diplomados change
-        }
-
-        function openDiplomadoModal(id = null) {
-            const isEdit = id !== null;
-            document.getElementById('modalDiplomadoTitle').innerText = isEdit ? 'Editar Diplomado' : 'Añadir Diplomado';
-            document.getElementById('dipId').value = id || '';
-            
-            if (isEdit) {
-                const dip = diplomados.find(d => d.id === id);
-                document.getElementById('dipNombre').value = dip.nombre;
-                document.getElementById('dipDesc').value = dip.desc;
-            } else {
-                document.getElementById('formDiplomado').reset();
-            }
-            modalDip.show();
-        }
-
-        document.getElementById('formDiplomado').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = document.getElementById('dipId').value;
-            const nombre = document.getElementById('dipNombre').value;
-            const desc = document.getElementById('dipDesc').value;
-
-            if (id) {
-                // Edit
-                const index = diplomados.findIndex(d => d.id === id);
-                if(index !== -1) diplomados[index] = { id, nombre, desc };
-            } else {
-                // Add
-                diplomados.push({ id: generateId(), nombre, desc });
-            }
-            
-            renderDiplomados();
-            renderProspectos(); // Re-render prospectos to update names if changed
-            modalDip.hide();
-        });
-
-
-        // --- PROSPECTOS CRUD & FILTERS ---
-        function updateDiplomadosFilterOptions() {
-            const select = document.getElementById('filterDiplomado');
-            const currentVal = select.value;
-            
-            // Only populate options based on visible filtered prospectos (ignoring diplomado filter itself)
-            const phoneSearch = document.getElementById('filterPhone').value.trim();
-            const estadoSearch = document.getElementById('filterEstado').value;
-            
-            let baseProspectos = prospectos;
-            if (phoneSearch) {
-                baseProspectos = prospectos.filter(p => p.telefono.includes(phoneSearch));
-            } else {
-                baseProspectos = prospectos.filter(p => !estadoSearch || p.estado === estadoSearch);
-            }
-
-            const activeDipIds = new Set();
-            baseProspectos.forEach(p => p.diplomados.forEach(d => activeDipIds.add(d)));
-
-            select.innerHTML = '<option value="">Todos los Diplomados</option>';
-            diplomados.forEach(dip => {
-                if(activeDipIds.has(dip.id)) {
-                    select.innerHTML += `<option value="${dip.id}">${dip.nombre}</option>`;
-                }
-            });
-
-            // Restore selection if it still exists
-            if (activeDipIds.has(currentVal)) {
-                select.value = currentVal;
-            }
-        }
-
-        function getFilteredProspectos() {
-            const phoneSearch = document.getElementById('filterPhone').value.trim();
-            const dipFilter = document.getElementById('filterDiplomado').value;
-            const estFilter = document.getElementById('filterEstado').value;
-
-            const filterDipSelect = document.getElementById('filterDiplomado');
-            const filterEstSelect = document.getElementById('filterEstado');
-
-            if (phoneSearch) {
-                // Disable other filters if phone search is active
-                filterDipSelect.disabled = true;
-                filterEstSelect.disabled = true;
-                return prospectos.filter(p => p.telefono.includes(phoneSearch));
-            } else {
-                filterDipSelect.disabled = false;
-                filterEstSelect.disabled = false;
-                return prospectos.filter(p => {
-                    const matchDip = !dipFilter || p.diplomados.includes(dipFilter);
-                    const matchEst = !estFilter || p.estado === estFilter;
-                    return matchDip && matchEst;
-                });
-            }
-        }
-
-        function renderProspectos() {
-            const tbody = document.getElementById('tableBodyProspectos');
-            const emptyState = document.getElementById('prospectosEmptyState');
-            
-            updateDiplomadosFilterOptions();
-            const filteredData = getFilteredProspectos();
-            
-            tbody.innerHTML = '';
-            
-            if (filteredData.length === 0) {
-                emptyState.classList.remove('d-none');
-                return;
-            }
-            emptyState.classList.add('d-none');
-
-            filteredData.forEach((p, index) => {
-                // Map diplomado IDs to names
-                const dipsHtml = p.diplomados.map(dId => {
-                    const dip = diplomados.find(d => d.id === dId);
-                    return dip ? `<span class="badge bg-light text-dark border me-1 mb-1 fw-normal">${dip.nombre}</span>` : '';
-                }).join('') || '<span class="text-muted small">Ninguno</span>';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="ps-4 text-muted">${index + 1}</td>
-                    <td class="text-muted">${p.fecha}</td>
-                    <td>
-                        <a href="https://wa.me/${p.telefono}" target="_blank" class="text-success text-decoration-none fw-medium d-inline-flex align-items-center gap-1 bg-success bg-opacity-10 px-2 py-1 rounded-pill">
-                            <i class="bi bi-whatsapp"></i> ${p.telefono}
-                        </a>
-                    </td>
-                    <td class="fw-medium text-dark">${p.nombre}</td>
-                    <td style="max-width: 200px;">${dipsHtml}</td>
-                    <td><span class="badge badge-custom ${getBadgeClass(p.estado)}">${p.estado}</span></td>
-                    <td class="text-end pe-4">
-                        <button class="btn btn-sm btn-light text-success me-1" onclick="openProspectoModal('${p.id}')" title="Editar"><i class="bi bi-pencil-fill"></i></button>
-                        <button class="btn btn-sm btn-light text-danger" onclick="confirmDelete('prospecto', '${p.id}')" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            updateDashboard();
-        }
-
-        // Setup filter listeners
-        document.getElementById('filterPhone').addEventListener('input', renderProspectos);
-        document.getElementById('filterDiplomado').addEventListener('change', renderProspectos);
-        document.getElementById('filterEstado').addEventListener('change', renderProspectos);
-
-        function openProspectoModal(id = null) {
-            const isEdit = id !== null;
-            document.getElementById('modalProspectoTitle').innerText = isEdit ? 'Editar Prospecto' : 'Añadir Prospecto';
-            document.getElementById('prosId').value = id || '';
-            
-            // Build diplomados checkboxes dynamically
-            const container = document.getElementById('prosDiplomadosContainer');
-            container.innerHTML = diplomados.length === 0 ? '<p class="text-muted small mb-0">No hay diplomados creados.</p>' : '';
-            
-            diplomados.forEach(dip => {
-                const div = document.createElement('div');
-                div.className = 'form-check mb-2';
-                div.innerHTML = `
-                    <input class="form-check-input check-dip focus-ring-success" type="checkbox" value="${dip.id}" id="chk_${dip.id}">
-                    <label class="form-check-label" for="chk_${dip.id}">${dip.nombre}</label>
-                `;
-                container.appendChild(div);
-            });
-
-            if (isEdit) {
-                const pros = prospectos.find(p => p.id === id);
-                document.getElementById('prosNombre').value = pros.nombre;
-                document.getElementById('prosTelefono').value = pros.telefono;
-                document.getElementById('prosEstado').value = pros.estado;
-                document.getElementById('prosFecha').value = pros.fecha;
-                
-                pros.diplomados.forEach(dId => {
-                    const chk = document.getElementById(`chk_${dId}`);
-                    if(chk) chk.checked = true;
-                });
-            } else {
-                document.getElementById('formProspecto').reset();
-                document.getElementById('prosFecha').value = new Date().toISOString().split('T')[0];
-            }
-            modalPros.show();
-        }
-
-        document.getElementById('formProspecto').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = document.getElementById('prosId').value;
-            const nombre = document.getElementById('prosNombre').value;
-            const telefono = document.getElementById('prosTelefono').value;
-            const estado = document.getElementById('prosEstado').value;
-            const fecha = document.getElementById('prosFecha').value;
-            
-            // Gather selected diplomados
-            const selectedDips = [];
-            document.querySelectorAll('.check-dip:checked').forEach(chk => {
-                selectedDips.push(chk.value);
-            });
-
-            if (id) {
-                // Edit
-                const index = prospectos.findIndex(p => p.id === id);
-                if(index !== -1) prospectos[index] = { id, nombre, telefono, estado, fecha, diplomados: selectedDips };
-            } else {
-                // Add
-                prospectos.push({ id: generateId(), nombre, telefono, estado, fecha, diplomados: selectedDips });
-            }
-            
-            renderProspectos();
-            modalPros.hide();
-        });
 
 
         // --- GENERIC DELETE CONFIRMATION ---
